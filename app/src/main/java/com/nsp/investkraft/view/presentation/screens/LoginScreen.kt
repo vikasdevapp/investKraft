@@ -60,7 +60,7 @@ fun LoginScreen(navController: NavController) {
         ) {
             Spacer(modifier = Modifier.height(40.dp))
 
-            // Illustration Image
+
             Image(
                 painter = painterResource(id = R.drawable.loginheader),
                 contentDescription = "Mobile illustration",
@@ -71,7 +71,7 @@ fun LoginScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(60.dp))
 
-            // Phone Input Field
+
             OutlinedTextField(
                 value = phoneNum,
                 onValueChange = {

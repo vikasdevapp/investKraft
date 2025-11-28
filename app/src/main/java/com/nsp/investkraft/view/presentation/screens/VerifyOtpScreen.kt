@@ -6,7 +6,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
@@ -35,6 +34,7 @@ import com.nsp.investkraft.ui.theme.colorPrimary
 import com.nsp.investkraft.ui.theme.colorWhite
 import com.nsp.investkraft.ui.theme.poppinsFont
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Preview(showBackground = true)
 @Composable
@@ -55,8 +55,9 @@ fun VerifyOtpScreen(navController: NavController, phoneNumber: String = "") {
     val focusRequester3 = remember { FocusRequester() }
     val focusRequester4 = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
-
+    val scope = rememberCoroutineScope()
     val systemUiController = rememberSystemUiController()
+    var isLoading by remember { mutableStateOf(false) }
 
     SideEffect {
         systemUiController.setStatusBarColor(
@@ -232,7 +233,14 @@ fun VerifyOtpScreen(navController: NavController, phoneNumber: String = "") {
 
             Button(
                 onClick = {
-
+                    isLoading = true
+                    scope.launch {
+                        delay(1000)
+                        isLoading = false
+                        navController.navigate("home") {
+                            popUpTo("otp") { inclusive = true }
+                        }
+                    }
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -244,40 +252,18 @@ fun VerifyOtpScreen(navController: NavController, phoneNumber: String = "") {
                 ),
                 shape = RoundedCornerShape(12.dp),
                 enabled = otp1.isNotEmpty() && otp2.isNotEmpty() &&
-                        otp3.isNotEmpty() && otp4.isNotEmpty()
+                        otp3.isNotEmpty() && otp4.isNotEmpty() && !isLoading
             ) {
-                Text(
-                    text = "Verify OTP",
-                    fontSize = 16.sp,
-                    fontFamily = poppinsFont,
-                    fontWeight = FontWeight.Medium
-                )
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            if (timer > 0) {
-                Text(
-                    text = "Resend OTP in $timer sec",
-                    fontSize = 14.sp,
-                    color = Color.Gray,
-                    fontFamily = poppinsFont
-                )
-            } else {
-                TextButton(
-                    onClick = {
-                        timer = 39
-                        otp1 = ""
-                        otp2 = ""
-                        otp3 = ""
-                        otp4 = ""
-                        focusRequester1.requestFocus()
-                    }
-                ) {
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        color = Color.White,
+                        strokeWidth = 2.dp,
+                        modifier = Modifier.size(24.dp)
+                    )
+                } else {
                     Text(
-                        text = "Resend OTP",
-                        fontSize = 14.sp,
-                        color = colorPrimary,
+                        text = "Verify OTP",
+                        fontSize = 16.sp,
                         fontFamily = poppinsFont,
                         fontWeight = FontWeight.Medium
                     )
@@ -294,19 +280,19 @@ fun OtpInputBox(
     focusRequester: FocusRequester,
     onBackspace: () -> Unit = {}
 ) {
-    val borderColor = if (value.isNotEmpty()) colorBlack else Color.Gray.copy(alpha = 0.3f)
+    val borderColor = if (value.isNotEmpty()) colorBlack else Color.Gray.copy(alpha = 0.4f)
 
     Box(
         modifier = Modifier
-            .size(64.dp)
+            .size(48.dp)
             .background(
                 color = Color.White,
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(10.dp)
             )
             .border(
-                width = 2.dp,
+                width = 1.5.dp,
                 color = borderColor,
-                shape = RoundedCornerShape(12.dp)
+                shape = RoundedCornerShape(10.dp)
             ),
         contentAlignment = Alignment.Center
     ) {
@@ -332,7 +318,7 @@ fun OtpInputBox(
             ),
             singleLine = true,
             textStyle = LocalTextStyle.current.copy(
-                fontSize = 24.sp,
+                fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
                 color = colorBlack,
@@ -343,19 +329,10 @@ fun OtpInputBox(
                 .focusRequester(focusRequester),
             decorationBox = { innerTextField ->
                 Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
                 ) {
-                    if (value.isEmpty()) {
-                        Box(
-                            modifier = Modifier
-                                .size(8.dp)
-                                .background(
-                                    color = Color.Gray.copy(alpha = 0.3f),
-                                    shape = RoundedCornerShape(4.dp)
-                                )
-                        )
-                    }
+
                     innerTextField()
                 }
             }

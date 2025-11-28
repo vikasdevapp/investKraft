@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.nsp.investkraft.view.presentation.screens.HomeScreen
 import com.nsp.investkraft.view.presentation.screens.LoginScreen
 import com.nsp.investkraft.view.presentation.screens.SplashScreen
 import com.nsp.investkraft.view.presentation.screens.VerifyOtpScreen
@@ -17,6 +18,8 @@ sealed class Screen(val route: String) {
     data object VerifyOtp : Screen("verifyOtpScreen/{phoneNumber}") {
         fun createRoute(phoneNumber: String) = "verifyOtpScreen/$phoneNumber"
     }
+    data object Home : Screen("home")
+
 }
 
 @Composable
@@ -46,6 +49,10 @@ fun TypeSafeNavigation(
         ) { backStackEntry ->
             val phoneNumber = backStackEntry.arguments?.getString("phoneNumber") ?: ""
             VerifyOtpScreen(navController, phoneNumber)
+        }
+
+        composable(Screen.Home.route) {
+            HomeScreen(navController)
         }
     }
 }

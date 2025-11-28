@@ -6,19 +6,20 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.LottieConstants
-import com.airbnb.lottie.compose.rememberLottieComposition
 import com.nsp.investkraft.R
+import com.nsp.investkraft.ui.theme.poppinsFont
 import com.nsp.investkraft.view.route.Screen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -35,7 +36,7 @@ fun SplashScreen(navController: NavController) {
             alphaAnim.animateTo(
                 targetValue = 1f,
                 animationSpec = tween(
-                    durationMillis = 1200,
+                    durationMillis = 800,
                     easing = LinearOutSlowInEasing
                 )
             )
@@ -51,7 +52,7 @@ fun SplashScreen(navController: NavController) {
             )
             scaleAnim.animateTo(
                 1f,
-                animationSpec = tween(400, easing = FastOutSlowInEasing)
+                animationSpec = tween(300, easing = FastOutSlowInEasing)
             )
         }
 
@@ -59,13 +60,13 @@ fun SplashScreen(navController: NavController) {
             rotateAnim.animateTo(
                 0f,
                 animationSpec = tween(
-                    durationMillis = 1400,
+                    durationMillis = 900,
                     easing = FastOutSlowInEasing
                 )
             )
         }
 
-        delay(2700)
+        delay(1500)
 
         if (!hasNavigated) {
             hasNavigated = true
@@ -82,29 +83,35 @@ fun SplashScreen(navController: NavController) {
             .background(Color.White),
         contentAlignment = Alignment.Center
     ) {
-        // Lottie Loader Background
-        val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.loader))
-        LottieAnimation(
-            composition = composition,
-            iterations = LottieConstants.IterateForever,
-            modifier = Modifier
-                .size(250.dp)
-                .align(Alignment.Center)
-        )
 
-        // Logo in front
-        Image(
-            painter = painterResource(id = R.drawable.logo),
-            contentDescription = "InvestKraft Logo",
-            modifier = Modifier
-                .size(150.dp)
-                .graphicsLayer(
-                    scaleX = scaleAnim.value,
-                    scaleY = scaleAnim.value,
-                    alpha = alphaAnim.value,
-                    rotationZ = rotateAnim.value
-                )
-        )
+
+        androidx.compose.foundation.layout.Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+
+            Image(
+                painter = painterResource(id = R.drawable.logo),
+                contentDescription = "InvestKraft Logo",
+                modifier = Modifier
+                    .size(150.dp)
+                    .graphicsLayer(
+                        scaleX = scaleAnim.value,
+                        scaleY = scaleAnim.value,
+                        alpha = alphaAnim.value,
+                        rotationZ = rotateAnim.value
+                    )
+            )
+
+            Text(
+                text = "Smart Loans for a Smarter Future",
+                fontSize = 16.sp,
+                fontFamily = poppinsFont,
+                fontWeight = FontWeight.Medium,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.graphicsLayer(alpha = alphaAnim.value)
+            )
+        }
     }
 
 }
